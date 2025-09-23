@@ -1,0 +1,17 @@
+name: morrisville
+channels:
+    - defaults
+dependencies:
+    - python=3.13
+    - numpy
+    - pip
+    - pandas
+    - pip:
+        - matplotlib
+        - fpdf2
+        - requests
+        - beautifulsoup4
+        - homeharvest
+        - PyQt5
+        - jupyter
+
