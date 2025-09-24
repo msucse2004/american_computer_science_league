@@ -12,7 +12,7 @@ class DecimalToBinary():
         self.title = "Decimal to Binary"
         pass
 
-    def generate_number_base(self)->(int, str):
+    def generate_number_base(self)->tuple[int, str]:
 
         init_number = random.randint(1, 15)
         # target_base = random.randint(2, 16)
@@ -21,7 +21,7 @@ class DecimalToBinary():
         converted_nuber = convert_to_base(10, target_base, str(init_number))
         return target_base, converted_nuber
 
-    def count_binary_digits(self, binary_number:str)-> (int, int):
+    def count_binary_digits(self, binary_number:str)-> tuple[int, int]:
         count_zero = binary_number.count('0')
         count_one = binary_number.count('1')
         return (count_zero, count_one)

@@ -87,7 +87,7 @@ class RGBCoding(RGB):
 
         return problem_text, answer_text
 
-    def make_trend_word_problem(self)->(str, str):
+    def make_trend_word_problem(self)->tuple[str, str]:
         color_set = ['red', 'green', 'blue']
         trend_word_set = ['increase', 'rise', 'grow', 'expand', 'decrease', 'reduce', 'fall', 'decline', 'drop', 'shrink']
         delta = [10, 20, 30, 40, 50, 60, 70, 80, 90]
@@ -116,7 +116,7 @@ class RGBCoding(RGB):
 
         return problem_text, answer_text
 
-    def make_color_value_problem(self)->(str, str):
+    def make_color_value_problem(self)->tuple[str, str]:
         color_set = ['red', 'green', 'blue']
         base_set = ['binary', 'quaternary', 'octal', 'decimal', 'hexadecimal']
         base_map = {'binary': 2, 'quaternary': 4, 'octal': 8, 'decimal': 10, 'hexadecimal': 16}
@@ -135,7 +135,7 @@ class RGBCoding(RGB):
         answer_text = f"{convert_to_base(10, base_map[base_choice], str(answer))}{SUBSCRIPT_NUMBERS[str(base_map[base_choice])]} or {base_prefix_map[base_choice]}{convert_to_base(10, base_map[base_choice], str(answer))}"
         return problem_text, answer_text
 
-    def generate_problem(self)->(str, str):
+    def generate_problem(self)->tuple[str, str]:
         self.rgb.initialize_rgb()
         color_set = ['red', 'green', 'blue']
         color_choice = random.choice(color_set)
@@ -164,7 +164,7 @@ class RGBCoding(RGB):
         random_choice = random.randint(0, len(problem_pool)-1)
         return problem_pool[random_choice], answer_pool[random_choice]
 
-    def get_problem_answer(self) -> (str, str):
+    def get_problem_answer(self) -> tuple[str, str]:
 
         problem_text = f""
         answer_text = f""

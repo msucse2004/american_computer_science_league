@@ -12,7 +12,7 @@ class BinaryAndHexadecimal():
         self.title = "Binary and Hexadecimal"
         pass
 
-    def generate_number_base(self)->(int, str):
+    def generate_number_base(self)->tuple[int, str]:
 
         init_number = random.randint(1000, 100000)
         target_base = random.choice([2, 16])
@@ -20,7 +20,7 @@ class BinaryAndHexadecimal():
         converted_number = convert_to_base(10, target_base, str(init_number))
         return target_base, converted_number
 
-    def get_problem_answer(self) -> (str, str):
+    def get_problem_answer(self) -> tuple[str, str]:
         base, number = self.generate_number_base()
 
         if base == 2:
@@ -61,8 +61,7 @@ class BinaryAndHexadecimal():
         except AttributeError:
             print("Error: 'pdf_handling' 모듈에 'generate_pdf_files' 함수가 없습니다.")
 
-#자신을 부모 클래스 레지스트리에 등록
-#ComputerNumberSystem.register_child('BinaryAndHexadecimal', BinaryAndHexadecimal)
+
 
 def main():
     BinaryAndHexadecimal().generate_practice(5)

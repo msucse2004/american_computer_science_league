@@ -12,7 +12,7 @@ class ExpandedForm():
         self.title = "Expanded Form"
         pass
 
-    def generate_number_base(self)->(int, str):
+    def generate_number_base(self)->tuple[int, str]:
 
         init_number = random.randint(1, 1000)
         target_base = random.randint(2, 16)

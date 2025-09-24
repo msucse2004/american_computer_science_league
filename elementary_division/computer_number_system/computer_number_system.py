@@ -34,7 +34,7 @@ class ComputerNumberSystem(ElementaryDivision):
         self.chapter = list(self.chapter_classes.keys())
 
 
-    def get_problem_answer(self, start_chapter: str = None, end_chapter: str = None) -> (list[str], list[str]):
+    def get_problem_answer(self, start_chapter: str = None, end_chapter: str = None) -> tuple[list[str], list[str]]:
 
         if start_chapter and end_chapter:
             try:

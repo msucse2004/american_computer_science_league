@@ -17,7 +17,7 @@ class AdditionAndSubtraction():
         #super().__init__()
         self.title = "Addition and Subtraction"
 
-    def generate_number_base(self) -> (int, str, str, str):
+    def generate_number_base(self) -> tuple[int, str, str, str]:
 
         op1 = random.randint(1000, 100000)
         op2 = random.randint(1000, 100000)
@@ -45,15 +45,7 @@ class AdditionAndSubtraction():
 
     @staticmethod
     def generate_random_expression(depth=0):
-        """
-        중첩 깊이가 2를 넘지 않는 무작위 수식을 생성합니다.
 
-        Args:
-            depth (int): 현재 재귀 호출의 깊이. 기본값은 0입니다.
-
-        Returns:
-            str: 생성된 무작위 수식 문자열.
-        """
         # operators = ['+', '-', '*', '/']
         # operators = ['+', '-', '*', '÷']
         operators = ['+', '-']
@@ -128,8 +120,6 @@ class AdditionAndSubtraction():
         except AttributeError:
             print("Error: 'pdf_handling' 모듈에 'generate_pdf_files' 함수가 없습니다.")
 
-#자신을 부모 클래스 레지스트리에 등록
-#ComputerNumberSystem.register_child('AdditionAndSubtraction', AdditionAndSubtraction)
 
 def main():
     AdditionAndSubtraction().generate_practice(5)
