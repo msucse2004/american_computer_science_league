@@ -87,7 +87,7 @@ def _add_content(pdf, content_list, num_columns, row_spacing, project_title=None
 
         # Add new page if any column reaches the bottom
         if max(column_y) > pdf.page_break_trigger - 20 and (i+1)%num_columns == 0:
-            print("adding page!!")
+            #print("adding page!!")
             pdf.add_page()
             if project_title:
                 pdf.set_font(FONT_FAMILY, 'B', 16)
