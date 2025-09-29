@@ -130,9 +130,9 @@ class OrderOfOperations(Expression):
                 continue
             evaluation_result = self.evaluate_postfix(postfix)
             if isinstance(evaluation_result, int):
-                problem_text = f"{self._format_expression_unicode(random_expression)} ="
+                problem_text = f"{self._infix_to_unicode_format(random_expression)} ="
                 answer_text = str(evaluation_result)
-                print(f"{random_expression} ==> {self._format_expression_unicode(random_expression)} = {evaluation_result}")
+                print(f"{random_expression} ==> {self._infix_to_unicode_format(random_expression)} = {evaluation_result}")
                 break
 
         return problem_text, answer_text

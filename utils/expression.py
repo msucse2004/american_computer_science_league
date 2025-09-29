@@ -4,6 +4,16 @@ from utils.unicodes import UNICODE_MULTIPLIER, SUPERSCRIPT_NUMBERS, UNICODE_DIVI
 
 
 class Expression:
+    # Define operator precedence: higher number means higher precedence
+    _PRECEDENCE = {
+        '+': 1,
+        '-': 1,
+        '*': 2,
+        '÷': 2,
+        '/': 2,
+        '^': 3,
+    }
+
     def __init__(self):
         #self._title = "Expression"
         self._number_of_nested = 2
@@ -12,8 +22,6 @@ class Expression:
         self._rule_negation = "No"
         self._rule_lower_limit = -1000
         self._rule_upper_limit = 1000
-
-
 
     @property
     def number_of_nested(self):
@@ -130,16 +138,6 @@ class Expression:
 
     def infix_to_postfix(self, infix_expression_string)->str:
 
-        # Define operator precedence: higher number means higher precedence
-        precedence = {
-            '+': 1,
-            '-': 1,
-            '*': 2,
-            '÷': 2,
-            '/': 2,
-            '^': 3,
-        }
-
         output = []  # To store the postfix expression
         operator_stack = []  # To store operators and parentheses
 
@@ -150,7 +148,7 @@ class Expression:
 
         for token in tokens:
             # Check if the token is a number (e.g., '11', '123') or an alphanumeric operand (e.g., 'A', 'xyz')
-            if token.isalnum():
+            if token.isalnum() or all(re.fullmatch(r'[⁰¹²³⁴⁵⁶⁷⁸⁹]', char) for char in token):
                 output.append(token)
             elif token == '(':
                 operator_stack.append(token)
@@ -168,12 +166,12 @@ class Expression:
                     operator_stack.pop()  # Pop the '(' from the stack
                 else:
                     return "Error: Mismatched parentheses."
-            elif token in precedence:  # If it's an operator
+            elif token in self._PRECEDENCE:  # If it's an operator
                 # Pop operators from stack to output if their precedence is
                 # greater than or equal to the current token's precedence
                 # and it's not a left parenthesis
                 while (operator_stack and operator_stack[-1] != '(' and
-                       precedence.get(operator_stack[-1], 0) >= precedence[token]):
+                       self._PRECEDENCE.get(operator_stack[-1], 0) >= self._PRECEDENCE[token]):
                     output.append(operator_stack.pop())
                 operator_stack.append(token)
             else:
@@ -186,6 +184,164 @@ class Expression:
             output.append(operator_stack.pop())
 
         return " ".join(output)
+
+    def infix_to_prefix(self, infix_expression_string) -> str:
+
+
+        # 1. 토큰화 및 문자열 반전
+        tokens = self.tokenize_expression(infix_expression_string)
+
+        # 괄호를 반전시키고 토큰 리스트를 반전시킵니다.
+        reversed_tokens = []
+        for token in reversed(tokens):
+            if token == '(':
+                reversed_tokens.append(')')
+            elif token == ')':
+                reversed_tokens.append('(')
+            else:
+                reversed_tokens.append(token)
+
+        output = []  # Prefix 표현식의 반전 결과를 저장
+        operator_stack = []
+
+        # **3. Infix to Postfix와 유사한 처리 (단, 반전된 식에 대해)**
+        for token in reversed_tokens:
+            if token.isalnum() or all(re.fullmatch(r'[⁰¹²³⁴⁵⁶⁷⁸⁹]', char) for char in token):  # 피연산자
+                output.append(token)
+            elif token == '(':
+                operator_stack.append(token)
+            elif token == ')':
+                while operator_stack and operator_stack[-1] != '(':
+                    output.append(operator_stack.pop())
+                if operator_stack and operator_stack[-1] == '(':
+                    operator_stack.pop()  # '(' 제거
+                else:
+                    return "Error: Mismatched parentheses in prefix conversion."
+            elif token in self._PRECEDENCE:  # 연산자
+                # Infix to Postfix에서 사용하는 precedence >= 조건을 그대로 사용
+                while (operator_stack and operator_stack[-1] != '(' and
+                       self._PRECEDENCE.get(operator_stack[-1], 0) >= self._PRECEDENCE[token]):
+                    output.append(operator_stack.pop())
+                operator_stack.append(token)
+            else:
+                return f"Error: Invalid token '{token}' in prefix conversion."
+
+        # 스택에 남은 연산자 처리
+        while operator_stack:
+            if operator_stack[-1] == '(':
+                return "Error: Mismatched parentheses in prefix conversion."
+            output.append(operator_stack.pop())
+
+        # 4. 최종 결과 반전 및 반환
+        return " ".join(reversed(output))
+
+    def prefix_to_infix(self, prefix_expression_string) -> str:
+        """
+        Prefix 표현식 문자열을 Infix 표현식 문자열로 변환합니다.
+        (괄호 포함)
+
+        Args:
+            prefix_expression_string (str): Space-separated Prefix 표현식 문자열.
+
+        Returns:
+            str: Infix 표현식 문자열 (괄호로 묶인 형태).
+        """
+        tokens = prefix_expression_string.split()
+        stack = []  # Infix 부분식을 저장할 스택
+
+        # Prefix는 오른쪽에서 왼쪽으로 읽어들입니다.
+        for token in reversed(tokens):
+            if token.isalnum() or all(re.fullmatch(r'[⁰¹²³⁴⁵⁶⁷⁸⁹]', char) for char in token):
+                # 피연산자는 그대로 스택에 푸시합니다.
+                stack.append(token)
+            elif token in self._PRECEDENCE:
+                if len(stack) < 2:
+                    return "Error: Invalid prefix expression, not enough operands."
+
+                # 연산자(토큰)를 만나면, 두 피연산자(인픽스 부분식)를 팝하고
+                # '(Operand1 Operator Operand2)' 형태로 새 인픽스 식을 만듭니다.
+                # Prefix에서는 Op1이 우측, Op2가 좌측에 해당합니다.
+                # 그러나 인픽스 식을 만들 때는 Op1이 좌측, Op2가 우측으로 오도록 배치합니다.
+
+                operand1 = stack.pop()  # 우측 피연산자 (Op2)
+                operand2 = stack.pop()  # 좌측 피연산자 (Op1)
+
+                # new_infix = f"({operand2} {token} {operand1})" # 원래의 올바른 순서
+                new_infix = f"({operand2} {token} {operand1})"  # Prefix는 연산자-Operand1-Operand2 순서 (읽는 순서 기준)
+
+                stack.append(new_infix)
+            else:
+                return f"Error: Invalid token '{token}' in prefix expression."
+
+        if len(stack) != 1:
+            return "Error: Invalid prefix expression, too many operands remaining."
+
+        # 최외곽 괄호를 제거하고 반환합니다.
+        result = stack.pop()
+        # if result.startswith('(') and result.endswith(')'):
+        #     return result[1:-1]
+        return result
+
+    def postfix_to_infix(self, postfix_expression_string) -> str:
+        """
+        Postfix 표현식 문자열을 Infix 표현식 문자열로 변환합니다.
+        (최소한의 괄호 포함)
+
+        Args:
+            postfix_expression_string (str): Space-separated Postfix 표현식 문자열.
+
+        Returns:
+            str: Infix 표현식 문자열 (적절한 괄호로 묶인 형태).
+        """
+        tokens = postfix_expression_string.split()
+        stack = []  # (Infix 부분식, 해당 식의 외부 연산자 우선순위)를 저장할 스택
+
+        for token in tokens:
+            if token.isalnum() or all(re.fullmatch(r'[⁰¹²³⁴⁵⁶⁷⁸⁹]', char) for char in token):
+                # 피연산자는 우선순위 4 (가장 높음, 임의 지정)로 스택에 푸시
+                stack.append((token, 4))
+            elif token in self._PRECEDENCE:
+                if len(stack) < 2:
+                    return "Error: Invalid postfix expression, not enough operands."
+
+                # Postfix: Operand1 Operand2 Operator
+                operand2_expr, operand2_prec = stack.pop()
+                operand1_expr, operand1_prec = stack.pop()
+
+                current_prec = self._PRECEDENCE[token]
+
+                # 괄호 추가 로직:
+                # 1. 현재 연산자보다 피연산자의 외부 연산자 우선순위가 더 낮으면 괄호 추가 (ex: 1 + (2*3))
+                # 2. 현재 연산자와 피연산자의 외부 연산자 우선순위가 같고, 현재 연산자가
+                #    좌측 결합(+, *, /)인데 Op2이거나, 우측 결합(^)인데 Op1이면 괄호 추가
+
+                # Op1 (좌측 항) 괄호 처리
+                if operand1_prec < current_prec or \
+                        (operand1_prec == current_prec and token == '^'):  # 우측 결합 연산자(^): Op1이 같은 우선순위면 괄호 추가
+                    op1_formatted = f"({operand1_expr})"
+                else:
+                    op1_formatted = operand1_expr
+
+                # Op2 (우측 항) 괄호 처리
+                # 좌측 결합 연산자(+, -, *, /, ÷)는 Op2가 같은 우선순위면 괄호 추가
+                if operand2_prec < current_prec or \
+                        (operand2_prec == current_prec and token != '^'):
+                    op2_formatted = f"({operand2_expr})"
+                else:
+                    op2_formatted = operand2_expr
+
+                new_infix = f"{op1_formatted} {token} {op2_formatted}"
+                stack.append((new_infix, current_prec))
+
+            else:
+                return f"Error: Invalid token '{token}' in postfix expression."
+
+        if len(stack) != 1:
+            return "Error: Invalid postfix expression, too many operands remaining."
+
+        # 최종 결과의 인픽스 식만 반환합니다.
+        return stack[0][0]
+
     def evaluate_postfix(self, postfix_expression_string):
         """
         Evaluates a postfix expression string and returns the result.
@@ -247,7 +403,7 @@ class Expression:
         final_result = operand_stack.pop()
         return final_result
 
-    def _format_expression_unicode(self, expression: str) -> str:
+    def _infix_to_unicode_format(self, expression: str) -> str:
         """
         주어진 infix expression 문자열을 후위 표기법(Postfix)을 사용하여
         사람이 읽기 좋은 수학적 표기(유니코드 연산자, 윗첨자)로 변환합니다.
