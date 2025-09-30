@@ -171,7 +171,8 @@ class Expression:
                 # greater than or equal to the current token's precedence
                 # and it's not a left parenthesis
                 while (operator_stack and operator_stack[-1] != '(' and
-                       self._PRECEDENCE.get(operator_stack[-1], 0) >= self._PRECEDENCE[token]):
+                       ((self._PRECEDENCE[operator_stack[-1]] > self._PRECEDENCE[token]) or
+                        (self._PRECEDENCE[operator_stack[-1]] == self._PRECEDENCE[token] and token != '^'))):
                     output.append(operator_stack.pop())
                 operator_stack.append(token)
             else:
@@ -220,7 +221,8 @@ class Expression:
             elif token in self._PRECEDENCE:  # 연산자
                 # Infix to Postfix에서 사용하는 precedence >= 조건을 그대로 사용
                 while (operator_stack and operator_stack[-1] != '(' and
-                       self._PRECEDENCE.get(operator_stack[-1], 0) >= self._PRECEDENCE[token]):
+                       ((self._PRECEDENCE[operator_stack[-1]] > self._PRECEDENCE[token]) or
+                        (self._PRECEDENCE[operator_stack[-1]] == self._PRECEDENCE[token] and token != '^'))):
                     output.append(operator_stack.pop())
                 operator_stack.append(token)
             else:
@@ -236,16 +238,7 @@ class Expression:
         return " ".join(reversed(output))
 
     def prefix_to_infix(self, prefix_expression_string) -> str:
-        """
-        Prefix 표현식 문자열을 Infix 표현식 문자열로 변환합니다.
-        (괄호 포함)
 
-        Args:
-            prefix_expression_string (str): Space-separated Prefix 표현식 문자열.
-
-        Returns:
-            str: Infix 표현식 문자열 (괄호로 묶인 형태).
-        """
         tokens = prefix_expression_string.split()
         stack = []  # Infix 부분식을 저장할 스택
 
@@ -258,16 +251,11 @@ class Expression:
                 if len(stack) < 2:
                     return "Error: Invalid prefix expression, not enough operands."
 
-                # 연산자(토큰)를 만나면, 두 피연산자(인픽스 부분식)를 팝하고
-                # '(Operand1 Operator Operand2)' 형태로 새 인픽스 식을 만듭니다.
-                # Prefix에서는 Op1이 우측, Op2가 좌측에 해당합니다.
-                # 그러나 인픽스 식을 만들 때는 Op1이 좌측, Op2가 우측으로 오도록 배치합니다.
-
-                operand1 = stack.pop()  # 우측 피연산자 (Op2)
-                operand2 = stack.pop()  # 좌측 피연산자 (Op1)
+                left = stack.pop()  # 우측 피연산자 (Op2)
+                right = stack.pop()  # 좌측 피연산자 (Op1)
 
                 # new_infix = f"({operand2} {token} {operand1})" # 원래의 올바른 순서
-                new_infix = f"({operand2} {token} {operand1})"  # Prefix는 연산자-Operand1-Operand2 순서 (읽는 순서 기준)
+                new_infix = f"({left} {token} {right})"  # Prefix는 연산자-Operand1-Operand2 순서 (읽는 순서 기준)
 
                 stack.append(new_infix)
             else:
@@ -341,6 +329,14 @@ class Expression:
 
         # 최종 결과의 인픽스 식만 반환합니다.
         return stack[0][0]
+
+    def evaluate_infix(self, infix):
+        postfix = self.infix_to_postfix(infix)
+        return self.evaluate_postfix(postfix)
+
+    def evaluate_prefix(self, prefix):
+        infix = self.prefix_to_infix(prefix)
+        return self.evaluate_infix(infix)
 
     def evaluate_postfix(self, postfix_expression_string):
         """
