@@ -2,7 +2,7 @@
 import random
 import utils
 from utils import pdf
-from utils.expression import tokenize_expression, infix_to_postfix, evaluate_postfix
+from utils.expression import Expression
 from utils.number_bases import convert_to_base
 from utils.unicodes import SUBSCRIPT_NUMBERS
 import os
@@ -12,10 +12,22 @@ NUM_PROBLEM_GENERATION = 10
 NUM_NESTED = 2
 
 
-class AdditionAndSubtraction():
+class AdditionAndSubtraction(Expression):
     def __init__(self):
-        #super().__init__()
-        self.title = "Addition and Subtraction"
+        super().__init__()
+        self._title = "Addition and Subtraction"
+
+    @property
+    def title(self):
+        """Returns the title of the expression type."""
+        return self._title
+
+    @title.setter
+    def title(self, value):
+        """Sets the title of the expression type."""
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("Title must be a non-empty string.")
+        self._title = value
 
     def generate_number_base(self) -> tuple[int, str, str, str]:
 
@@ -32,7 +44,7 @@ class AdditionAndSubtraction():
 
 
     def convert_base_of_expression(self, expression: str, base: int) -> str:
-        tockens = tokenize_expression(expression)
+        tockens = self.tokenize_expression(expression)
         new_expression = []
         for tocken in tockens:
             if tocken.isdigit():
@@ -77,10 +89,9 @@ class AdditionAndSubtraction():
     def get_problem_answer(self) -> (str, str):
         while True:
             random_expression = self.generate_random_expression()
-            postfix = infix_to_postfix(random_expression)
-            evaluation_result = evaluate_postfix(postfix)
+            evaluation_result = self.evaluate_infix(random_expression)
 
-            print(tokenize_expression(random_expression))
+            print(self.tokenize_expression(random_expression))
             target_base = random.randint(2, 16)
 
             if isinstance(evaluation_result, int):
@@ -122,7 +133,15 @@ class AdditionAndSubtraction():
 
 
 def main():
-    AdditionAndSubtraction().generate_practice(5)
+    topic_instance = AdditionAndSubtraction()
+    topic_instance.title = "Addition and Subtraction"
+    topic_instance.number_of_nested = 1
+    topic_instance.difficulty_level = 0.2
+    topic_instance.frequency_exponential = 0.3
+    topic_instance.rule_negation = "No"
+    topic_instance.allowed_operators = '+-*/'
+
+    topic_instance.generate_practice(5)
 
 if __name__ == "__main__":
     main()

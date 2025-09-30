@@ -1,33 +1,31 @@
-
-import random
 import os
+import random
 import sys
+
+from elementary_division.expressions.cacluate_infix_notation.calculate_infix_notation import CalculateInfixNotation
+from elementary_division.expressions.caculate_prefix_notation.caculate_prefix_notation import CaculatePrefixNotation
+from elementary_division.expressions.calculate_postfix_notation.calculate_postfix_notation import \
+    CalculatePostfixNotation
+from elementary_division.expressions.convert_infix_posfix.convert_infix_posfix import ConvertInfixPostfix
+from elementary_division.expressions.convert_infix_prefix.convert_infix_prefix import ConvertInfixPrefix
+from elementary_division.expressions.convert_prefix_postfix.convert_prefix_postfix import ConvertPrefixPostfix
+from elementary_division.expressions.mathmatical_expression_to_infix_notation.mathmatical_expression_to_infix_notation import \
+    MathmaticalExpressionToInfixNotation
+from elementary_division.expressions.order_of_operations.order_of_operations import OrderOfOperations
 from utils import pdf
-from utils.number_bases import convert_to_base
-from utils.unicodes import SUBSCRIPT_NUMBERS
-
-from elementary_division.computer_number_system.addition_and_subtraction.addition_and_subtraction import AdditionAndSubtraction
-from elementary_division.computer_number_system.binary_and_hexadecimal.binary_and_hexadecimal import BinaryAndHexadecimal
-from elementary_division.computer_number_system.decimal_to_binary.decimal_to_binary import DecimalToBinary
-from elementary_division.computer_number_system.expanded_form.expanded_form import ExpandedForm
-from elementary_division.computer_number_system.find_number.find_number import FindNumber
-from elementary_division.computer_number_system.rgb_coding.rgb_coding import RGBCoding
-from elementary_division.computer_number_system.transforming_number_bases.transforming_number_bases import TransformNumberBases
 
 
-class ComputerNumberSystem():
-
+class Expressions():
     def __init__(self):
-
-        self._title = "Computer Number System"
-
-        self.chapter_classes = {'ExpandedForm': ExpandedForm(),
-                                'TransformNumberBases': TransformNumberBases(),
-                                'DecimalToBinary': DecimalToBinary(),
-                                'BinaryAndHexadecimal': BinaryAndHexadecimal(),
-                                'FindNumber': FindNumber(),
-                                'AdditionAndSubtraction': AdditionAndSubtraction(),
-                                'RGBCoding': RGBCoding()
+        self._title = "Expressions"
+        self.chapter_classes = {'OrderOfOperations': OrderOfOperations(),
+                                'MathmaticalExpressionToInfixNotation': MathmaticalExpressionToInfixNotation(),
+                                'CalculateInfixNotation': CalculateInfixNotation(),
+                                'ConvertInfixPrefix': ConvertInfixPrefix(),
+                                'ConvertInfixPostfix': ConvertInfixPostfix(),
+                                'ConvertPrefixPostfix': ConvertPrefixPostfix(),
+                                'CaculatePrefixNotation': CaculatePrefixNotation(),
+                                'CalculatePostfixNotation': CalculatePostfixNotation()
                                 }
         self.chapter = list(self.chapter_classes.keys())
 
@@ -106,8 +104,8 @@ class ComputerNumberSystem():
             sys.path.append(module_path)
 
         try:
-            pdf.generate_pdf_files(f"{self.title} Problems", problem_list, num_column=2, row_spacing=70)
-            pdf.generate_pdf_files(f"{self.title} Answers", answer_list, num_column=2)
+            pdf.generate_pdf_files(f"{self.title} Problems", problem_list, num_column=1, row_spacing=70)
+            pdf.generate_pdf_files(f"{self.title} Answers", answer_list, num_column=1)
             print("PDF 파일이 성공적으로 생성되었습니다.")
         except ImportError:
             print("Error: 'pdf_handling' 모듈을 찾을 수 없습니다.")
@@ -117,7 +115,7 @@ class ComputerNumberSystem():
 
 def main():
     # self.chapter = ['ExpandedForm', 'TransformNumberBases', 'DecimalToBinary', 'BinaryAndHexadecimal', 'FindNumber', 'AdditionAndSubtraction', 'RGBCoding']
-    ComputerNumberSystem().generate_practice(None, None, 2)
+    Expressions().generate_practice(None, None, 2)
 
 if __name__ == "__main__":
     main()
