@@ -7,15 +7,41 @@ import sys
 from utils import pdf
 
 class ExpandedForm():
+
     def __init__(self):
         #super().__init__()
-        self.title = "Expanded Form"
+        self._title = "Expanded Form"
+        self._target_base = "Decimal"
         pass
+    @property
+    def title(self):
+        """Returns the title of the expression type."""
+        return self._title
+
+    @title.setter
+    def title(self, value):
+        """Sets the title of the expression type."""
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("Title must be a non-empty string.")
+        self._title = value
+
+    @property
+    def target_base(self):
+        return self._target_base
+
+    @target_base.setter
+    def target_base(self, value):
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("Target base must be a non-empty string.")
+        self._target_base = value
 
     def generate_number_base(self)->tuple[int, str]:
 
-        init_number = random.randint(1, 1000)
-        target_base = random.randint(2, 16)
+        init_number = random.randint(1, 100000)
+        if self._target_base == "Decimal":
+            target_base = 10
+        else:
+            target_base = random.randint(2, 16)
 
         converted_nuber = convert_to_base(10, target_base, str(init_number))
         return target_base, converted_nuber
@@ -83,7 +109,14 @@ class ExpandedForm():
 #ComputerNumberSystem.register_child('ExpandedForm', ExpandedForm)
 
 def main():
-    ExpandedForm().generate_practice(5)
+    topic_instance = ExpandedForm()
+    topic_instance.title = "Expanded Form - Decimal"
+    topic_instance.target_base = "Decimal"
+    topic_instance.generate_practice(5)
+
+    topic_instance.title = "Expanded Form - Various"
+    topic_instance.target_base = "All"
+    topic_instance.generate_practice(5)
 
 if __name__ == "__main__":
     main()

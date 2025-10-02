@@ -15,3 +15,20 @@ UNICODE_MULTIPLIER = chr(215)
 UNICODE_PRODUCT = chr(8901)
 UNICODE_DIVISION = chr(247)
 UNICODE_SQUARE_ROOT= '\u221a'
+
+OPERATORS_MAP = ["+", "-", "*", "/", "^", UNICODE_MULTIPLIER, UNICODE_PRODUCT, UNICODE_DIVISION]
+PARENTHESES = ["(", ")", "[", "]", "{", "}"]
+
+def identify_token_type(token: str) -> str:
+    if token in OPERATORS_MAP:
+        return "Operator"
+    elif token in PARENTHESES:
+        return "Parenthesis"
+    elif token in SUPERSCRIPT_NUMBERS:
+        return "Superscript"
+    elif token in SUBSCRIPT_NUMBERS:
+        return "Subscript"
+    elif token.isalnum():
+        return "Number"
+    else:
+        return "Unknown"

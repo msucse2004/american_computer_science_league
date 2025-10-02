@@ -29,7 +29,7 @@ class MathmaticalExpressionToInfixNotation(Expression):
     def generate_problem(self) -> tuple[str, str]:
         problem_text, answer_text = None, None
 
-        self._operation_instance.number_of_nested = 3
+        self._operation_instance.number_of_nested = 2
         self._operation_instance.difficulty_level = 0.2
         self._operation_instance.frequency_exponential = 0.3
 
@@ -85,7 +85,11 @@ class MathmaticalExpressionToInfixNotation(Expression):
             print("Error: 'pdf_handling' 모듈에 'generate_pdf_files' 함수가 없습니다.")
 
 def main():
+    infix_notation = "(9 - 5 + 5) + (5 ^ 3 + 4 + 7) / (4 ^ 2 ^ 2)"
+    #infix_notation = "(4 ^ 2 ^ 2)"
+    #infix_notation = "(9 - 5 + 5)"
     topic_instance = MathmaticalExpressionToInfixNotation()
+    print(topic_instance._infix_to_unicode_format(infix_notation))
     topic_instance.generate_practice(5)
 
 

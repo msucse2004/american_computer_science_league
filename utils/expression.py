@@ -1,6 +1,7 @@
 import re
 
-from utils.unicodes import UNICODE_MULTIPLIER, SUPERSCRIPT_NUMBERS, UNICODE_DIVISION
+from utils.unicodes import UNICODE_MULTIPLIER, SUPERSCRIPT_NUMBERS, UNICODE_DIVISION, UNICODE_PRODUCT, \
+    identify_token_type
 
 
 class Expression:
@@ -188,7 +189,6 @@ class Expression:
 
     def infix_to_prefix(self, infix_expression_string) -> str:
 
-
         # 1. 토큰화 및 문자열 반전
         tokens = self.tokenize_expression(infix_expression_string)
 
@@ -222,7 +222,7 @@ class Expression:
                 # Infix to Postfix에서 사용하는 precedence >= 조건을 그대로 사용
                 while (operator_stack and operator_stack[-1] != '(' and
                        ((self._PRECEDENCE[operator_stack[-1]] > self._PRECEDENCE[token]) or
-                        (self._PRECEDENCE[operator_stack[-1]] == self._PRECEDENCE[token] and token != '^'))):
+                        (self._PRECEDENCE[operator_stack[-1]] == self._PRECEDENCE[token] and token == '^'))):
                     output.append(operator_stack.pop())
                 operator_stack.append(token)
             else:
@@ -400,107 +400,59 @@ class Expression:
         return final_result
 
     def _infix_to_unicode_format(self, expression: str) -> str:
-        """
-        주어진 infix expression 문자열을 후위 표기법(Postfix)을 사용하여
-        사람이 읽기 좋은 수학적 표기(유니코드 연산자, 윗첨자)로 변환합니다.
 
-        Args:
-            expression (str): Infix 표현식 문자열.
-
-        Returns:
-            str: 유니코드로 포맷된 Infix 표현식 문자열.
-        """
-        # 1. 인픽스 표현식을 포스트픽스로 변환합니다.
+        infix_notation = expression
+        prefix_expression = self.infix_to_prefix(expression)
         postfix_expression = self.infix_to_postfix(expression)
+        if "Error:" in prefix_expression:
+            return prefix_expression  # 오류 메시지를 그대로 반환
 
-        if "Error:" in postfix_expression:
-            return postfix_expression  # 오류 메시지를 그대로 반환
+        tokens = prefix_expression.split()
 
-        tokens = postfix_expression.split()
-
-        # 결과를 저장할 스택 (여기에 문자열 형태의 부분 표현식이 쌓입니다)
-        # 스택의 각 요소는 부분적으로 포맷된 수식 문자열입니다.
-        formatting_stack = []
-
-        # 연산자 정의
-        BINARY_OPERATORS = ['+', '-', '*', '/', '^', UNICODE_MULTIPLIER, UNICODE_DIVISION]
-
-        for token in tokens:
-            if token not in BINARY_OPERATORS:
-                # 피연산자는 그대로 스택에 넣습니다.
-                formatting_stack.append(token)
-
-            # 2. 연산자 처리
-            elif token in BINARY_OPERATORS:
-                if len(formatting_stack) < 2:
-                    return f"Error: Invalid postfix expression structure near operator '{token}'."
-
-                # 후위 표기법: operand2가 우측 항, operand1이 좌측 항
-                operand2 = formatting_stack.pop()
-                operand1 = formatting_stack.pop()
-
-                new_expr = ""
-
-                # 2.1. 지수 연산자 처리 ('^')
-                if token == '^':
-                    # 지수(operand2)를 유니코드 윗첨자로 변환
-                    superscript = "".join(SUPERSCRIPT_NUMBERS.get(ch, ch) for ch in operand2)
-
-                    # 밑(operand1)에 괄호 추가 여부 결정: 복잡한 항(공백/연산자 포함)이거나 괄호가 없으면 추가
-                    # 이전에 `( )²`와 같은 오류가 발생하지 않도록 괄호 처리 로직을 신중하게 적용합니다.
-
-                    # 지수 연산자의 밑이 복합적인 연산(공백 포함)이지만,
-                    # 아직 괄호로 감싸져 있지 않은 경우에만 괄호를 추가
-                    is_complex_base = any(
-                        op in operand1 for op in [' ', '+', '-', '*', UNICODE_MULTIPLIER, '/', UNICODE_DIVISION]
-                        ) or re.search(r'[⁰¹²³⁴⁵⁶⁷⁸⁹]', operand1)
-
-                    if is_complex_base and not (operand1.startswith('(') and operand1.endswith(')')):
-                        base = f"({operand1})"
+        current_index = 0
+        while len(tokens) > 1:
+            if current_index + 2 >= len(tokens):
+                current_index = 0
+                if len(tokens) > 1 and current_index + 2 < len(tokens):
+                    continue
+                else:
+                    break
+            token1 = tokens[current_index]
+            token2 = tokens[current_index + 1]
+            token3 = tokens[current_index + 2]
+            # find pattern
+            if identify_token_type(token1) == "Operator" and identify_token_type(token2) != "Operator" and identify_token_type(token3) != "Operator":
+                operator = token1
+                left_term = token2
+                right_term = token3
+                if operator == "^":
+                    print(f"infix: {expression}, prefix: {prefix_expression}, l: {left_term}, r: {right_term}")
+                    if identify_token_type(left_term) == "Unknown":
+                        new_term = f"({left_term}){SUPERSCRIPT_NUMBERS[right_term]}"
                     else:
-                        base = operand1
+                        if identify_token_type(right_term) == "Number" and any(c in SUPERSCRIPT_NUMBERS.values() for c in right_term):
+                            new_term = f"({left_term}{SUPERSCRIPT_NUMBERS[right_term[0]]}){right_term[1:]}"
+                        else:
+                            new_term = f"{left_term}{SUPERSCRIPT_NUMBERS[right_term]}"
+                elif operator == "*":
+                    new_term = f"({left_term} {UNICODE_MULTIPLIER} {right_term})"
+                elif operator == "/":
+                    new_term = f"({left_term} {UNICODE_DIVISION} {right_term})"
+                else:
+                    new_term = f"({left_term} {operator} {right_term})"
 
-                    new_expr = f"{base}{superscript}"
-
-                # 2.2. 곱셈/나눗셈 연산자 처리
-                elif token in ('*', UNICODE_MULTIPLIER, '/', UNICODE_DIVISION):
-                    new_op = UNICODE_MULTIPLIER if token in ('*', UNICODE_MULTIPLIER) else UNICODE_DIVISION
-
-                    # 괄호 추가 규칙:
-                    # 곱셈/나눗셈의 피연산자가 덧셈/뺄셈을 포함하는 복잡한 식인 경우 괄호로 감싸야 합니다.
-                    # 이는 피연산자에 '+' 또는 '-'가 포함되거나 공백이 포함되어 복잡한 연산임을 나타낼 때 해당됩니다.
-
-                    def add_parentheses(operand, op_token):
-                        # 덧셈/뺄셈은 상위 연산자가 곱셈/나눗셈일 때 괄호 필요
-                        if op_token in ('*', UNICODE_MULTIPLIER, '/', UNICODE_DIVISION):
-                            # 항이 복잡하고(공백 포함) 이미 괄호로 감싸져 있지 않다면 괄호 추가
-                            if ('+' in operand or '-' in operand or ' ' in operand) and \
-                                    not (operand.startswith('(') and operand.endswith(')')):
-                                return f"({operand})"
-                        return operand
-
-                    op1_formatted = add_parentheses(operand1, token)
-                    op2_formatted = add_parentheses(operand2, token)
-
-                    new_expr = f"{op1_formatted} {new_op} {op2_formatted}"
-
-                # 2.3. 덧셈/뺄셈 연산자 처리
-                elif token in ('+', '-'):
-                    # 덧셈/뺄셈은 일반적으로 괄호가 필요 없지만, 스택의 내용을 연결하고 공백을 추가합니다.
-                    new_expr = f"{operand1} {token} {operand2}"
-
-                # 2.4. 결과 스택에 추가
-                formatting_stack.append(new_expr)
-
+                tokens[current_index] = new_term
+                del tokens[current_index + 2]
+                del tokens[current_index + 1]
+                current_index = 0
             else:
-                return f"Error: Invalid token '{token}' during formatting."
+                current_index = current_index + 1
+        if not tokens:
+            return "Error: no expression found."
 
-        # 3. 최종 결과 반환
-        if len(formatting_stack) == 1:
-            final_result = formatting_stack[0]
+        final_result = tokens[0]
 
-            return final_result
+        if final_result.startswith('(') and final_result.endswith(')'):
+            return final_result[1:-1]
 
-        else:
-            return "Error: Postfix formatting failed, too many operands remaining."
-
+        return final_result

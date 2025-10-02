@@ -99,8 +99,13 @@ class OrderOfOperations(Expression):
 
             expression = f"{left_part} {operator} {right_part}"
         else:
-            operator1 = random.choice(operators)
-            operator2 = random.choice(operators)
+            while True:
+                operator1 = random.choice(operators)
+                operator2 = random.choice(operators)
+                if operator1 == '^' and operator2 == '^':
+                    continue
+                else:
+                    break
             left_part = self.generate_random_expression(depth + 1)
             if operator1 == '^':
                 middle_part = str(random.randint(2, 3))
@@ -173,9 +178,14 @@ class OrderOfOperations(Expression):
 
 def main():
 
-    #expression = "((3 ^ 3) ^ 2) - ((8 * 4 ^ 3) + (7 - 3))"
-    #unicode_expression = OrderOfOperations()._format_expression_unicode(expression)
-    #print(unicode_expression)
+    """
+    expression = "7^2^2 + 9 ^ 2"
+    unicode_expression = OrderOfOperations()._infix_to_unicode_format(expression)
+    print(unicode_expression)
+    :return:
+    """
+
+
     topic_instance = OrderOfOperations()
     topic_instance.title = "Order of Operations - 1"
     topic_instance.number_of_nested = 1
@@ -197,14 +207,16 @@ def main():
     topic_instance.generate_practice(5)
 
     topic_instance.title = "Order of Operations - 3"
-    topic_instance.number_of_nested = 1
+    topic_instance.number_of_nested = 2
     topic_instance.allowed_operators = '+-*/^'
-    topic_instance.generate_practice(5)
+    topic_instance.generate_practice(100)
 
     topic_instance.title = "Order of Operations - 4"
     topic_instance.number_of_nested = 3
     topic_instance.allowed_operators = '+-*/^'
-    topic_instance.generate_practice(5)
+    topic_instance.rule_lower_upper_limit = (-1000, 1000)
+    topic_instance.generate_practice(100)
+
 
 if __name__ == "__main__":
     main()
