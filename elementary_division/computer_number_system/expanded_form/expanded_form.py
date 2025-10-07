@@ -37,7 +37,7 @@ class ExpandedForm():
 
     def generate_number_base(self)->tuple[int, str]:
 
-        init_number = random.randint(1, 100000)
+        init_number = random.randint(1, 1000000)
         if self._target_base == "Decimal":
             target_base = 10
         else:
@@ -97,7 +97,7 @@ class ExpandedForm():
             sys.path.append(module_path)
 
         try:
-            pdf.generate_pdf_files(f"{self.title} Problems", problem_list, num_column=2, row_spacing=70)
+            pdf.generate_pdf_files(f"{self.title} Problems", problem_list, num_column=1, row_spacing=70)
             pdf.generate_pdf_files(f"{self.title} Answers", answer_list, num_column=2)
             print("PDF 파일이 성공적으로 생성되었습니다.")
         except ImportError:
@@ -110,13 +110,13 @@ class ExpandedForm():
 
 def main():
     topic_instance = ExpandedForm()
-    topic_instance.title = "Expanded Form - Decimal"
+    topic_instance.title = "Expanded Form - Decimal (마루)"
     topic_instance.target_base = "Decimal"
-    topic_instance.generate_practice(5)
+    topic_instance.generate_practice(10)
 
     topic_instance.title = "Expanded Form - Various"
     topic_instance.target_base = "All"
-    topic_instance.generate_practice(5)
+    topic_instance.generate_practice(10)
 
 if __name__ == "__main__":
     main()

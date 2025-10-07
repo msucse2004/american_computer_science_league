@@ -202,9 +202,9 @@ def main():
     topic_instance.generate_practice(5)
 
     topic_instance.title = "Order of Operations - 2"
-    topic_instance.number_of_nested = 3
+    topic_instance.number_of_nested = 2
     topic_instance.allowed_operators = '+-*/'
-    topic_instance.generate_practice(5)
+    topic_instance.generate_practice(100)
 
     topic_instance.title = "Order of Operations - 3"
     topic_instance.number_of_nested = 2
