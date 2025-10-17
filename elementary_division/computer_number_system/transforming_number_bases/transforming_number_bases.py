@@ -17,6 +17,7 @@ class TransformNumberBases():
 
         init_number = random.randint(1, 1000)
         target_base = random.randint(2, 16)
+        #target_base = 10
 
         converted_nuber = convert_to_base(10, target_base, str(init_number))
         return target_base, converted_nuber
@@ -25,10 +26,11 @@ class TransformNumberBases():
         base, number = self.generate_number_base()
         # expanded_form = get_expanded_form(base, number)
         target_base = random.randint(2, 16)
+        #target_base = 10
         answer = convert_to_base(base, target_base, str(number))
 
         problem_text = f"{number} {SUBSCRIPT_NUMBERS[str(base)]} converts to base {target_base} "
-        answer_text = f"{answer}{SUBSCRIPT_NUMBERS[str(target_base)]}"
+        answer_text = f"{answer}{SUBSCRIPT_NUMBERS[str(target_base)]} , ({convert_to_base(base, 10, str(number))}{SUBSCRIPT_NUMBERS[str(10)]})"
 
         return problem_text, answer_text
 
@@ -63,7 +65,9 @@ class TransformNumberBases():
 #ComputerNumberSystem.register_child('TransformNumberBases', TransformNumberBases)
 
 def main():
-    TransformNumberBases().generate_practice(5)
+    topic_instance = TransformNumberBases()
+    topic_instance.title = "Transform Number Bases"
+    topic_instance.generate_practice(50)
 
 if __name__ == "__main__":
     main()
