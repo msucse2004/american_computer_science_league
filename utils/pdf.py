@@ -13,10 +13,13 @@ def generate_pdf_files(
         project,
         problem_answer_list,
         num_column=1,
-        row_spacing=20
+        row_spacing=20,
+        output_dir: str | None = None,
 ):
 
     try:
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
 
         # Generate Problems PDF
         pdf_problems = _create_pdf(f"{project}")
@@ -27,8 +30,10 @@ def generate_pdf_files(
             row_spacing,
             project
         )
-        pdf_problems.output(f"{project.replace(" ", "_")}.pdf")
-        print(f"***'{project.replace(" ", "_")}.pdf' has been created.")
+        output_name = f"{project.replace(' ', '_')}.pdf"
+        output_path = os.path.join(output_dir, output_name) if output_dir else output_name
+        pdf_problems.output(output_path)
+        print(f"***'{output_path}' has been created.")
 
     except FileNotFoundError as e:
         print(f"Error: {e}")

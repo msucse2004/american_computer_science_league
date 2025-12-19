@@ -11,6 +11,7 @@ from elementary_division.computer_number_system.binary_and_hexadecimal.binary_an
 from elementary_division.computer_number_system.decimal_to_binary.decimal_to_binary import DecimalToBinary
 from elementary_division.computer_number_system.expanded_form.expanded_form import ExpandedForm
 from elementary_division.computer_number_system.find_number.find_number import FindNumber
+from elementary_division.computer_number_system.percent_increase_decrease.percent_increase_decrease import PercentIncreaseDecrease
 from elementary_division.computer_number_system.rgb_coding.rgb_coding import RGBCoding
 from elementary_division.computer_number_system.transforming_number_bases.transforming_number_bases import TransformNumberBases
 
@@ -27,7 +28,8 @@ class ComputerNumberSystem():
                                 'BinaryAndHexadecimal': BinaryAndHexadecimal(),
                                 'FindNumber': FindNumber(),
                                 'AdditionAndSubtraction': AdditionAndSubtraction(),
-                                'RGBCoding': RGBCoding()
+                                'RGBCoding': RGBCoding(),
+                                'PercentIncreaseDecrease': PercentIncreaseDecrease()
                                 }
         self.chapter = list(self.chapter_classes.keys())
 
