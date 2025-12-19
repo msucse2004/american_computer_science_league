@@ -9,7 +9,7 @@ import os
 import sys
 
 NUM_PROBLEM_GENERATION = 10
-NUM_NESTED = 2
+NUM_NESTED = 1
 
 
 class AdditionAndSubtraction(Expression):
@@ -31,11 +31,11 @@ class AdditionAndSubtraction(Expression):
 
     def generate_number_base(self) -> tuple[int, str, str, str]:
 
-        op1 = random.randint(1000, 100000)
-        op2 = random.randint(1000, 100000)
+        op1 = random.randint(1, 15)
+        op2 = random.randint(1, 15)
         # target_base = random.choice([2, 16])
         target_base = random.randint(2, 16)
-        op = random.choice(['+', '-'])
+        op = random.choice(['+'])
 
         converted_op1 = convert_to_base(10, target_base, str(op1))
         converted_op2 = convert_to_base(10, target_base, str(op2))
@@ -60,11 +60,12 @@ class AdditionAndSubtraction(Expression):
 
         # operators = ['+', '-', '*', '/']
         # operators = ['+', '-', '*', '÷']
-        operators = ['+', '-']
+        # operators = ['+', '-']
+        operators = ['+']
 
         # 중첩 깊이가 2를 초과하면 숫자를 반환합니다.
         if depth >= NUM_NESTED:
-            return str(random.randint(1, 1000))
+            return str(random.randint(20, 48))
 
         # 50% 확률로 숫자를 반환하여 수식의 복잡도를 조절합니다.
         # if random.choice([True, False]):
@@ -92,7 +93,7 @@ class AdditionAndSubtraction(Expression):
             evaluation_result = self.evaluate_infix(random_expression)
 
             print(self.tokenize_expression(random_expression))
-            target_base = random.randint(2, 16)
+            target_base = random.randint(11, 16)
 
             if isinstance(evaluation_result, int):
                 problem_text = self.convert_base_of_expression(random_expression, target_base)
@@ -134,14 +135,14 @@ class AdditionAndSubtraction(Expression):
 
 def main():
     topic_instance = AdditionAndSubtraction()
-    topic_instance.title = "Addition and Subtraction"
+    topic_instance.title = "Addition4"
     topic_instance.number_of_nested = 1
     topic_instance.difficulty_level = 0.2
     topic_instance.frequency_exponential = 0.3
     topic_instance.rule_negation = "No"
     topic_instance.allowed_operators = '+-*/'
 
-    topic_instance.generate_practice(5)
+    topic_instance.generate_practice(200)
 
 if __name__ == "__main__":
     main()

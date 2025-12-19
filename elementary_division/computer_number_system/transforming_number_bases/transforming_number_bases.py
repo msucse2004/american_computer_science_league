@@ -15,9 +15,9 @@ class TransformNumberBases():
 
     def generate_number_base(self)->(int, str):
 
-        init_number = random.randint(1, 1000)
-        target_base = random.randint(2, 16)
-        #target_base = 10
+        init_number = random.randint(1, 15)
+        #target_base = random.randint(2, 16)
+        target_base = 16
 
         converted_nuber = convert_to_base(10, target_base, str(init_number))
         return target_base, converted_nuber
@@ -25,8 +25,8 @@ class TransformNumberBases():
     def get_problem_answer(self) -> (str, str):
         base, number = self.generate_number_base()
         # expanded_form = get_expanded_form(base, number)
-        target_base = random.randint(2, 16)
-        #target_base = 10
+        #target_base = random.randint(2, 16)
+        target_base = 2
         answer = convert_to_base(base, target_base, str(number))
 
         problem_text = f"{number} {SUBSCRIPT_NUMBERS[str(base)]} converts to base {target_base} "
@@ -66,8 +66,8 @@ class TransformNumberBases():
 
 def main():
     topic_instance = TransformNumberBases()
-    topic_instance.title = "Transform Number Bases"
-    topic_instance.generate_practice(50)
+    topic_instance.title = "Transform Number Bases- to Binary"
+    topic_instance.generate_practice(200)
 
 if __name__ == "__main__":
     main()
