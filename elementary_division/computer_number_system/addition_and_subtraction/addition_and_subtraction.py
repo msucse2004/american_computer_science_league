@@ -92,15 +92,17 @@ class AdditionAndSubtraction(Expression):
             random_expression = self.generate_random_expression()
             evaluation_result = self.evaluate_infix(random_expression)
 
-            print(self.tokenize_expression(random_expression))
+            # Commented out to avoid cp949 encoding errors on Windows console when printing Unicode subscripts
+            # print(self.tokenize_expression(random_expression))
             target_base = random.randint(11, 16)
 
             if isinstance(evaluation_result, int):
                 problem_text = self.convert_base_of_expression(random_expression, target_base)
                 answer_text = f"{convert_to_base(10, target_base, str(evaluation_result))}{SUBSCRIPT_NUMBERS[str(target_base)]}"
 
-                print(f"{random_expression} = {evaluation_result}")
-                print(f"returning: {problem_text} {answer_text}")
+                # Commented out to avoid cp949 encoding errors on Windows console when printing Unicode subscripts
+                # print(f"{random_expression} = {evaluation_result}")
+                # print(f"returning: {problem_text} {answer_text}")
                 break
 
         return f"{problem_text} = ", answer_text

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Coding 문제 풀이 - 문제 2번, 5번</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', Arial, sans-serif;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+        }
+        .problem {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #e74c3c;
+        }
+        .solution {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #4caf50;
+        }
+        .step {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-radius: 5px;
+            border-left: 3px solid #ff9800;
+        }
+        .step-title {
+            font-weight: bold;
+            color: #e65100;
+            margin-bottom: 10px;
+        }
+        .formula {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .color-box {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            margin: 10px;
+            vertical-align: middle;
+        }
+        .answer {
+            background-color: #fff9c4;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 2px solid #fbc02d;
+            font-size: 1.2em;
+            text-align: center;
+        }
+        .highlight {
+            background-color: #fff59d;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        sub {
+            font-size: 0.75em;
+            vertical-align: sub;
+            line-height: 0;
+        }
+        table {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RGB Coding 문제 풀이</h1>
+        <p style="text-align: right; color: #7f8c8d;">문제 2번, 5번 상세 풀이</p>
+
+        <!-- 문제 2번 -->
+        <h2>문제 2번</h2>
+        <div class="problem">
+            <strong>문제:</strong> If you drop the blue component of the color #FF1468 by 80%, what is the new hexadecimal color code?
+            <br><br>
+            <strong>번역:</strong> 색상 #FF1468의 파란색(blue) 구성 요소를 80% 감소시키면 새로운 16진수 색상 코드는 무엇입니까?
+        </div>
+
+        <div class="solution">
+            <div class="step">
+                <div class="step-title">1단계: 16진수 색상 코드 분해하기</div>
+                색상 코드 #FF1468을 RGB 구성 요소로 분해합니다:
+                <div class="formula">
+                    #FF1468 = RGB(FF<sub>16</sub>, 14<sub>16</sub>, 68<sub>16</sub>)
+                </div>
+                <ul>
+                    <li>Red (빨간색): <code>FF<sub>16</sub></code></li>
+                    <li>Green (녹색): <code>14<sub>16</sub></code></li>
+                    <li>Blue (파란색): <code>68<sub>16</sub></code> ← 이것을 80% 감소시켜야 함</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <div class="step-title">2단계: 파란색(Blue) 값을 10진수로 변환하기</div>
+                파란색 구성 요소만 10진수로 변환합니다:
+                <div class="formula">
+                    68<sub>16</sub> = 6 × 16 + 8 = 96 + 8 = 104<sub>10</sub>
+                </div>
+                따라서 현재 파란색 값은 <span class="highlight">104</span>입니다.
+            </div>
+
+            <div class="step">
+                <div class="step-title">3단계: 파란색 값을 80% 감소시키기</div>
+                현재 파란색 값: <code>104</code><br>
+                80% 감소한다는 것은 원래 값의 20%만 남는다는 의미입니다:
+                <div class="formula">
+                    새로운 Blue 값 = 104 × (100% - 80%) = 104 × 20% = 104 × 0.20 = 20.8
+                </div>
+                RGB 값은 정수여야 하므로 버림(내림)하면:
+                <div class="formula">
+                    새로운 Blue 값 = 20
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title">4단계: 새로운 10진수 값을 16진수로 변환하기</div>
+                Red와 Green은 변경되지 않았으므로 그대로 유지:
+                <ul>
+                    <li>Red: 255<sub>10</sub> = FF<sub>16</sub></li>
+                    <li>Green: 20<sub>10</sub> = 14<sub>16</sub></li>
+                </ul>
+                새로운 Blue 값을 16진수로 변환:
+                <div class="formula">
+                    20<sub>10</sub> = 1 × 16 + 4 = 14<sub>16</sub>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title">5단계: 최종 16진수 색상 코드 조합하기</div>
+                새로운 RGB 값을 16진수로 조합:
+                <div class="formula">
+                    새로운 색상 코드 = #FF1414
+                </div>
+                <div style="margin-top: 15px;">
+                    <span class="color-box" style="background-color: #FF1468;"></span>
+                    <span style="margin: 0 20px;">→</span>
+                    <span class="color-box" style="background-color: #FF1414;"></span>
+                </div>
+                <div style="text-align: center; margin-top: 10px; color: #7f8c8d;">
+                    원래 색상 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 새로운 색상
+                </div>
+            </div>
+
+            <div class="answer">
+                <strong>정답: #FF1414</strong>
+            </div>
+        </div>
+
+        <!-- 문제 5번 -->
+        <h2>문제 5번</h2>
+        <div class="problem">
+            <strong>문제:</strong> A color has a red value of 79, a green value of 118, and a blue value of 54. What is its hexadecimal color code?
+            <br><br>
+            <strong>번역:</strong> 색상의 빨간색 값이 79, 녹색 값이 118, 파란색 값이 54일 때, 16진수 색상 코드는 무엇입니까?
+        </div>
+
+        <div class="solution">
+            <div class="step">
+                <div class="step-title">1단계: 주어진 RGB 값 확인하기</div>
+                <div class="formula">
+                    Red (R) = 79<sub>10</sub><br>
+                    Green (G) = 118<sub>10</sub><br>
+                    Blue (B) = 54<sub>10</sub>
+                </div>
+                각 값을 16진수로 변환해야 합니다.
+            </div>
+
+            <div class="step">
+                <div class="step-title">2단계: Red 값(79)을 16진수로 변환하기</div>
+                10진수 79를 16진수로 변환 (나눗셈 방법):
+                <table style="width: 100%; margin: 15px 0; border-collapse: collapse; font-family: 'Courier New', monospace;">
+                    <tr style="border-bottom: 2px solid #333;">
+                        <th style="padding: 10px; text-align: center; background-color: #e3f2fd;">나누는 수</th>
+                        <th style="padding: 10px; text-align: center; background-color: #e3f2fd;">몫</th>
+                        <th style="padding: 10px; text-align: center; background-color: #e3f2fd;">나머지</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; text-align: center;">16</td>
+                        <td style="padding: 10px; text-align: center;">79</td>
+                        <td style="padding: 10px; text-align: center;">-</td>
+                    </tr>
+                    <tr style="background-color: #fff3e0;">
+                        <td style="padding: 10px; text-align: center;">16</td>
+                        <td style="padding: 10px; text-align: center;">4</td>
+                        <td style="padding: 10px; text-align: center; font-weight: bold; color: #e65100;">15 (F)</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; text-align: center;">16</td>
+                        <td style="padding: 10px; text-align: center;">0</td>
+                        <td style="padding: 10px; text-align: center; font-weight: bold; color: #e65100;">4</td>
+                    </tr>
+                </table>
+                <div class="formula">
+                    79<sub>10</sub> = 4 × 16 + 15 = 4F<sub>16</sub>
+                </div>
+                나머지를 아래에서 위로 읽으면: <span class="highlight">4F<sub>16</sub></span> (15는 16진수에서 F로 표현)
+            </div>
+
+            <div class="step">
+                <div class="step-title">3단계: Green 값(118)을 16진수로 변환하기</div>
+                10진수 118을 16진수로 변환:
+                <table style="width: 100%; margin: 15px 0; border-collapse: collapse; font-family: 'Courier New', monospace;">
+                    <tr style="border-bottom: 2px solid #333;">
+                        <th style="padding: 10px; text-align: center; background-color: #e3f2fd;">나누는 수</th>
+                        <th style="padding: 10px; text-align: center; background-color: #e3f2fd;">몫</th>
+                        <th style="padding: 10px; text-align: center; background-color: #e3f2fd;">나머지</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; text-align: center;">16</td>
+                        <td style="padding: 10px; text-align: center;">118</td>
+                        <td style="padding: 10px; text-align: center;">-</td>
+                    </tr>
+                    <tr style="background-color: #fff3e0;">
+                        <td style="padding: 10px; text-align: center;">16</td>
+                        <td style="padding: 10px; text-align: center;">7</td>
+                        <td style="padding: 10px; text-align: center; font-weight: bold; color: #e65100;">6</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; text-align: center;">16</td>
+                        <td style="padding: 10px; text-align: center;">0</td>
+                        <td style="padding: 10px; text-align: center; font-weight: bold; color: #e65100;">7</td>
+                    </tr>
+                </table>
+                <div class="formula">
+                    118<sub>10</sub> = 7 × 16 + 6 = 76<sub>16</sub>
+                </div>
+                나머지를 아래에서 위로 읽으면: <span class="highlight">76<sub>16</sub></span>
+            </div>
+
+            <div class="step">
+                <div class="step-title">4단계: Blue 값(54)을 16진수로 변환하기</div>
+                10진수 54를 16진수로 변환:
+                <table style="width: 100%; margin: 15px 0; border-collapse: collapse; font-family: 'Courier New', monospace;">
+                    <tr style="border-bottom: 2px solid #333;">
+                        <th style="padding: 10px; text-align: center; background-color: #e3f2fd;">나누는 수</th>
+                        <th style="padding: 10px; text-align: center; background-color: #e3f2fd;">몫</th>
+                        <th style="padding: 10px; text-align: center; background-color: #e3f2fd;">나머지</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; text-align: center;">16</td>
+                        <td style="padding: 10px; text-align: center;">54</td>
+                        <td style="padding: 10px; text-align: center;">-</td>
+                    </tr>
+                    <tr style="background-color: #fff3e0;">
+                        <td style="padding: 10px; text-align: center;">16</td>
+                        <td style="padding: 10px; text-align: center;">3</td>
+                        <td style="padding: 10px; text-align: center; font-weight: bold; color: #e65100;">6</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; text-align: center;">16</td>
+                        <td style="padding: 10px; text-align: center;">0</td>
+                        <td style="padding: 10px; text-align: center; font-weight: bold; color: #e65100;">3</td>
+                    </tr>
+                </table>
+                <div class="formula">
+                    54<sub>10</sub> = 3 × 16 + 6 = 36<sub>16</sub>
+                </div>
+                나머지를 아래에서 위로 읽으면: <span class="highlight">36<sub>16</sub></span>
+            </div>
+
+            <div class="step">
+                <div class="step-title">5단계: 16진수 색상 코드 조합하기</div>
+                각 구성 요소의 16진수 값을 순서대로 조합:
+                <div class="formula">
+                    RGB(79, 118, 54) = RGB(4F<sub>16</sub>, 76<sub>16</sub>, 36<sub>16</sub>)<br>
+                    색상 코드 = #4F7636
+                </div>
+                <div style="margin-top: 15px;">
+                    <span class="color-box" style="background-color: #4F7636;"></span>
+                    <span style="margin-left: 15px; vertical-align: middle;">이 색상입니다</span>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title">검증: 16진수를 다시 10진수로 변환하여 확인</div>
+                <div class="formula">
+                    #4F7636 = RGB(4F<sub>16</sub>, 76<sub>16</sub>, 36<sub>16</sub>)<br>
+                    = RGB(4×16+15, 7×16+6, 3×16+6)<br>
+                    = RGB(64+15, 112+6, 48+6)<br>
+                    = RGB(79, 118, 54) ✓
+                </div>
+                원래 값과 일치하므로 정답이 맞습니다!
+            </div>
+
+            <div class="answer">
+                <strong>정답: #4F7636</strong>
+            </div>
+        </div>
+
+        <!-- 요약 -->
+        <h2>핵심 개념 정리</h2>
+        <div class="solution">
+            <h3>1. 10진수 → 16진수 변환</h3>
+            <ul>
+                <li>수를 16으로 나누고, 나머지를 오른쪽에서 왼쪽으로 읽습니다.</li>
+                <li>10~15는 A~F로 표현합니다 (A=10, B=11, C=12, D=13, E=14, F=15).</li>
+            </ul>
+
+            <h3>2. 16진수 → 10진수 변환</h3>
+            <ul>
+                <li>각 자릿수에 16의 거듭제곱을 곱하여 더합니다.</li>
+                <li>예: 4F<sub>16</sub> = 4×16¹ + 15×16⁰ = 64 + 15 = 79<sub>10</sub></li>
+            </ul>
+
+            <h3>3. RGB 색상 코드 형식</h3>
+            <ul>
+                <li>형식: #RRGGBB (각각 2자리 16진수)</li>
+                <li>각 값의 범위: 0~255 (00<sub>16</sub>~FF<sub>16</sub>)</li>
+                <li>퍼센트 계산 시 결과는 0~255 범위 내로 제한됩니다.</li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #ddd; text-align: center; color: #7f8c8d;">
+            <p>RGB Coding 문제 풀이 완료</p>
+        </div>
+    </div>
+</body>
+</html>
+

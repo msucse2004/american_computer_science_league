@@ -41,8 +41,8 @@ class PercentIncreaseDecrease:
 
     def _pick_percent(self) -> int:
         if self.difficulty == "easy":
-            # 3rd-grade friendly: multiples of 10.
-            return random.choice([10, 20, 30, 40, 50])
+            # 3rd-grade friendly: multiples of 10 from 10% to 200%.
+            return random.choice([10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200])
         # medium
         return random.choice([5, 10, 12, 15, 20, 25, 30, 40, 50, 60, 75])
 
@@ -99,6 +99,7 @@ class PercentIncreaseDecrease:
         # - starting number is a multiple of 10
         # - starting number <= 1000
         # - (for 3rd grade) keep the result <= 1000 as well
+        # - answer must always be positive
         if is_increase:
             max_original = (1000 * 100) // (100 + percent)
             max_original = (max_original // 10) * 10  # round down to nearest 10
@@ -107,8 +108,48 @@ class PercentIncreaseDecrease:
                 max_original = 1000
             original = random.randrange(10, max_original + 1, 10)
         else:
-            original = random.randrange(10, 1001, 10)
+            # For decrease: ensure answer is positive
+            # new_value = original * (100 - percent) / 100 > 0
+            # This means percent must be < 100, but we allow up to 200%
+            # So we need to ensure: original * (100 - percent) / 100 > 0
+            # If percent >= 100, this becomes negative or zero
+            # Solution: only allow percent < 100 for decrease problems, OR ensure original is large enough
+            if percent >= 100:
+                # For percent >= 100, we need to force increase or limit percent
+                # Let's limit decrease percent to max 90% to ensure positive results
+                is_increase = True
+                max_original = (1000 * 100) // (100 + percent)
+                max_original = (max_original // 10) * 10
+                if max_original < 10:
+                    percent = 90  # fallback to 90% decrease
+                    is_increase = False
+                    max_original = 1000
+                else:
+                    original = random.randrange(10, max_original + 1, 10)
+            else:
+                # percent < 100, safe for decrease
+                original = random.randrange(10, 1001, 10)
+            
+            if not is_increase:
+                original = random.randrange(10, 1001, 10)
+        
         new_value = self._apply_percent(original, percent, is_increase)
+        
+        # Double-check that answer is positive (shouldn't happen, but safety check)
+        if new_value <= 0:
+            # Force increase if result would be negative
+            is_increase = True
+            percent = self._pick_percent()
+            max_original = (1000 * 100) // (100 + percent)
+            max_original = (max_original // 10) * 10
+            if max_original >= 10:
+                original = random.randrange(10, max_original + 1, 10)
+                new_value = self._apply_percent(original, percent, is_increase)
+            else:
+                # Fallback to smaller percent
+                percent = 50
+                original = random.randrange(10, 1001, 10)
+                new_value = self._apply_percent(original, percent, is_increase)
 
         trend = self._trend_word(is_increase)
         problem_text = f"{original} {trend} by {percent}% = "
@@ -257,7 +298,7 @@ class PercentIncreaseDecrease:
 
 def main():
     # Default: easy
-    PercentIncreaseDecrease(difficulty="easy").generate_practice(5)
+    PercentIncreaseDecrease(difficulty="easy").generate_practice(50)
 
 
 if __name__ == "__main__":

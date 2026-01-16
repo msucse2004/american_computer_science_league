@@ -1,9 +1,16 @@
 #from elementary_division.computer_number_system.computer_number_system import ComputerNumberSystem
-from utils.number_bases import convert_to_base
-from utils.unicodes import SUBSCRIPT_NUMBERS, UNICODE_MULTIPLIER, SUPERSCRIPT_NUMBERS
 import random
 import os
 import sys
+
+# Allow running this file directly (without requiring the project root on PYTHONPATH).
+_THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+_PROJECT_ROOT = os.path.abspath(os.path.join(_THIS_DIR, "..", "..", ".."))
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+
+from utils.number_bases import convert_to_base
+from utils.unicodes import SUBSCRIPT_NUMBERS, UNICODE_MULTIPLIER, SUPERSCRIPT_NUMBERS
 from utils import pdf
 
 class RGB():
@@ -38,7 +45,7 @@ class RGB():
         self.red = f"{self.red_decimal:02X}"
         self.green = f"{self.green_decimal:02X}"
         self.blue = f"{self.blue_decimal:02X}"
-        print(f"({self.red_decimal}, {self.green_decimal}, {self.blue_decimal}) -> #{self.red}{self.green}{self.blue} generated RGB")
+        # print(f"({self.red_decimal}, {self.green_decimal}, {self.blue_decimal}) -> #{self.red}{self.green}{self.blue} generated RGB")
 
 
 class RGBCoding(RGB):
@@ -105,7 +112,7 @@ class RGBCoding(RGB):
             answer = answer * (100 -int(delta_choice))//100
         if answer > 0xff :
             answer = 0xff
-        print(f"trend word problem calculation: {color_choice}: {self.rgb.get_rgb_decimal()[color_set.index(color_choice)]} -> {answer}")
+        # print(f"trend word problem calculation: {color_choice}: {self.rgb.get_rgb_decimal()[color_set.index(color_choice)]} -> {answer}")
 
         if color_choice == 'red':
             answer_text = f"#{answer:02X}{self.rgb.green}{self.rgb.blue}"
@@ -118,7 +125,7 @@ class RGBCoding(RGB):
 
     def make_color_value_problem(self)->tuple[str, str]:
         color_set = ['red', 'green', 'blue']
-        base_set = ['binary', 'quaternary', 'octal', 'decimal', 'hexadecimal']
+        base_set = ['binary']  # Only binary for base conversion problems
         base_map = {'binary': 2, 'quaternary': 4, 'octal': 8, 'decimal': 10, 'hexadecimal': 16}
         base_prefix_map = {'binary': '0b', 'quaternary': '0q', 'octal': '0o', 'decimal': '', 'hexadecimal': '0x'}
 
@@ -140,26 +147,26 @@ class RGBCoding(RGB):
         color_set = ['red', 'green', 'blue']
         color_choice = random.choice(color_set)
         random_colors = random.sample(color_set, 2)
-        print(random_colors)
+        # print(random_colors)
         color_value_problem, color_value_answer = self.make_color_value_problem()
         trend_problem, trend_answer = self.make_trend_word_problem()
-        bitwise_problem, bitwise_answer = self.make_bitwise_operation_problem()
+        # bitwise_problem, bitwise_answer = self.make_bitwise_operation_problem()
         problem_pool = [color_value_problem,
                         f"A color has a red value of {self.rgb.red_decimal}, a green value of {self.rgb.green_decimal}, and a blue value of {self.rgb.blue_decimal}. What is its hexadecimal color code?",
                         f"What is the sum of the {random_colors[0]} and {random_colors[1]} components for the color {self.rgb.get_rgb_code()} in decimal?",
                         trend_problem,
-                        bitwise_problem,
+                        # bitwise_problem,
                         ]
 
         answer_pool = [color_value_answer,
                        f"{self.rgb.get_rgb_code()}",
                        f"{self.rgb.get_rgb_decimal()[color_set.index(random_colors[0])] + self.rgb.get_rgb_decimal()[color_set.index(random_colors[1])]}",
                        trend_answer,
-                       bitwise_answer,
+                       # bitwise_answer,
                        ]
 
-        for problem, answer in zip(problem_pool, answer_pool):
-            print(f"{problem} : {answer}")
+        # for problem, answer in zip(problem_pool, answer_pool):
+        #     print(f"{problem} : {answer}")
 
         random_choice = random.randint(0, len(problem_pool)-1)
         return problem_pool[random_choice], answer_pool[random_choice]
@@ -169,7 +176,7 @@ class RGBCoding(RGB):
         problem_text = f""
         answer_text = f""
         problem_text, answer_text = self.generate_problem()
-        print(f"{problem_text} {answer_text}")
+        # print(f"{problem_text} {answer_text}")
 
         return problem_text, answer_text
 
@@ -184,16 +191,11 @@ class RGBCoding(RGB):
             answer_list.append(answer)
             num_of_problems += 1
 
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        parent_dir = os.path.dirname(current_dir)
-        module_path = os.path.join(parent_dir, "pdf_handling")
-
-        if module_path not in sys.path:
-            sys.path.append(module_path)
+        output_dir = os.path.dirname(os.path.abspath(__file__))
 
         try:
-            pdf.generate_pdf_files(f"{self.title} Problems", problem_list, num_column=2, row_spacing=70)
-            pdf.generate_pdf_files(f"{self.title} Answers", answer_list, num_column=2)
+            pdf.generate_pdf_files(f"{self.title} Problems", problem_list, num_column=2, row_spacing=70, output_dir=output_dir)
+            pdf.generate_pdf_files(f"{self.title} Answers", answer_list, num_column=2, output_dir=output_dir)
             print("PDF 파일이 성공적으로 생성되었습니다.")
         except ImportError:
             print("Error: 'pdf_handling' 모듈을 찾을 수 없습니다.")
@@ -204,7 +206,7 @@ class RGBCoding(RGB):
 #ComputerNumberSystem.register_child('RGBCoding', RGBCoding)
 
 def main():
-    RGBCoding().generate_practice(5)
+    RGBCoding().generate_practice(50)
 
 if __name__ == "__main__":
     main()

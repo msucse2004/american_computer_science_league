@@ -89,7 +89,8 @@ class DecimalToBinary():
         problem_text = f""
         answer_text = f""
         problem_text, answer_text = self.generate_problem()
-        print(f"{problem_text} {answer_text}")
+        # Commented out to avoid cp949 encoding errors on Windows console when printing Unicode subscripts
+        # print(f"{problem_text} {answer_text}")
 
         return problem_text, answer_text
 

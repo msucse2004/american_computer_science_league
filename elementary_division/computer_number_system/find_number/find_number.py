@@ -48,8 +48,9 @@ class FindNumber():
 
         index = number_list.index(target_number)
 
-        print(number_list, option, sorted_number_list, converted_number_list)
-        print(index, converted_number_list[index])
+        # Commented out to avoid cp949 encoding errors on Windows console when printing Unicode subscripts
+        # print(number_list, option, sorted_number_list, converted_number_list)
+        # print(index, converted_number_list[index])
 
         problem_text = f"Which of the following is {option} number? {converted_number_list}"
         answer_text = f"{converted_number_list[index]}, {number_list}"
