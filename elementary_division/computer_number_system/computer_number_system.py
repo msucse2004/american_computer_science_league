@@ -34,7 +34,6 @@ class ComputerNumberSystem():
 
         self.chapter_classes = {'ExpandedForm': ExpandedForm(),
                                 'TransformNumberBases': TransformNumberBases(),
-                                
                                 'FindNumber': FindNumber(),
                                 'AdditionAndSubtraction': AdditionAndSubtraction(),
                                 'RGBCoding': RGBCoding(),
@@ -70,7 +69,8 @@ class ComputerNumberSystem():
             print("Error: The specific chapter range is empty.")
             return [], []
 
-        random.shuffle(selected_chapters)
+        # 문제 생성 순서를 고정하여 PDF와 HTML이 일치하도록 함
+        # random.shuffle(selected_chapters)  # 주석 처리하여 순서 고정
         
         # Retry until all chapters succeed, or max attempts reached
         max_total_attempts = 10
@@ -118,6 +118,8 @@ class ComputerNumberSystem():
         # Collect all problems and answers from all sets, with page breaks between sets
         problem_list = []
         answer_list = []
+        # 모든 문제와 답을 저장 (HTML 생성용)
+        all_problems_with_answers = []
 
         for set_num in range(1, problem_set + 1):
             problem, answer = self.get_problem_answer(start_chapter, end_chapter)
@@ -131,10 +133,14 @@ class ComputerNumberSystem():
             problem_list.extend(problem)
             answer_list.extend(answer)
             
-            # Add page break marker (None) between sets (except after the last set)
+            # HTML 생성을 위해 문제와 답 저장
+            for p, a in zip(problem, answer):
+                all_problems_with_answers.append((p, a))
+            
+            # Add page break marker (None) between sets for Problems PDF only
+            # Answers PDF should be continuous without page breaks
             if set_num < problem_set:
-                problem_list.append(None)  # Page break marker
-                answer_list.append(None)   # Page break marker
+                problem_list.append(None)  # Page break marker for Problems PDF
 
         if not problem_list:
             print("No problems were generated. Cannot create PDF.")
@@ -150,18 +156,40 @@ class ComputerNumberSystem():
 
         try:
             # Generate a single PDF containing all sets with page breaks between sets
+            # Answers PDF can have tighter spacing since answers are usually shorter
             pdf.generate_pdf_files(f"{self.title} Problems", problem_list, num_column=2, row_spacing=row_spacing_val, output_dir=output_dir)
-            pdf.generate_pdf_files(f"{self.title} Answers", answer_list, num_column=2, row_spacing=row_spacing_val, output_dir=output_dir)
+            pdf.generate_pdf_files(f"{self.title} Answers", answer_list, num_column=2, row_spacing=20, output_dir=output_dir)
             print("PDF 파일이 성공적으로 생성되었습니다.")
+            
+            # 생성한 문제와 답을 반환 (HTML 생성용)
+            return all_problems_with_answers
         except ImportError:
             print("Error: 'pdf_handling' 모듈을 찾을 수 없습니다.")
         except AttributeError:
             print("Error: 'pdf_handling' 모듈에 'generate_pdf_files' 함수가 없습니다.")
+        
+        return all_problems_with_answers
 
 
 def main():
     # self.chapter = ['ExpandedForm', 'TransformNumberBases', 'DecimalToBinary', 'BinaryAndHexadecimal', 'FindNumber', 'AdditionAndSubtraction', 'RGBCoding']
-    ComputerNumberSystem().generate_practice(None, None, 2)
+    # 시드 고정하여 PDF와 HTML이 일치하도록 함
+    random.seed(42)
+    cns = ComputerNumberSystem()
+    problems_with_answers = cns.generate_practice(None, None, 30)
+    
+    # PDF 생성 후 자동으로 풀이 HTML 생성
+    if problems_with_answers:
+        try:
+            from elementary_division.computer_number_system.generate_solutions import generate_solutions_from_problems
+            print("\n풀이 HTML 파일을 생성합니다...")
+            generate_solutions_from_problems(problems_with_answers)
+        except ImportError as e:
+            print(f"\n경고: 풀이 HTML 생성 스크립트를 불러올 수 없습니다: {e}")
+        except Exception as e:
+            print(f"\n경고: 풀이 HTML 생성 중 오류가 발생했습니다: {e}")
+    else:
+        print("\n경고: 문제가 생성되지 않아 풀이 HTML을 생성할 수 없습니다.")
 
 if __name__ == "__main__":
     main()

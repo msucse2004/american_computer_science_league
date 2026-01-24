@@ -181,25 +181,46 @@ def _add_content(pdf, content_list, num_columns, row_spacing, project_title=None
         _draw_column_dividers(new_start_y)
         return new_start_y, [new_start_y] * num_columns
 
+    # Track problem number across all pages (continuous numbering)
+    problem_number = 0
+    # Track problem number within current page (for column placement)
+    problem_number_in_page = 0
+    # Track if we just started a new page (to ensure left column starts first)
+    just_started_new_page = False
+    
     for i, content in enumerate(content_list):
         # Check for page break marker (None or "__PAGE_BREAK__")
         if content is None or (isinstance(content, str) and content.strip() == "__PAGE_BREAK__"):
             # Force a new page before continuing
             start_y, column_y = _start_new_page()
+            just_started_new_page = True
+            problem_number_in_page = 0  # Reset page-internal counter
+            # Don't reset problem_number - keep it continuous across pages
             continue
         
-        col_index = i % num_columns
+        # Increment problem number only for actual content
+        problem_number += 1
+        problem_number_in_page += 1
+        
+        # Calculate column index based on position within current page
+        col_index = (problem_number_in_page - 1) % num_columns
 
         # Prevent drawing into the bottom margin/footer area:
         # if this column is too low, start a new page BEFORE rendering.
         if column_y[col_index] > pdf.page_break_trigger - 20:
             start_y, column_y = _start_new_page()
+            just_started_new_page = True
+            problem_number_in_page = 0  # Reset page-internal counter
+            # Re-increment for the new page
+            problem_number_in_page += 1
+            # Recalculate column index for the new page
+            col_index = (problem_number_in_page - 1) % num_columns
 
         x_col = margin + col_index * (col_width + gutter)
         pdf.set_xy(x_col, column_y[col_index])
 
         # Using multi_cell for automatic line breaks
-        prefix = f"{i + 1}) "
+        prefix = f"{problem_number}) "
         content_str = str(content)
 
         # Special-case: render pure LaTeX fraction answers as an image so they appear as a real fraction.

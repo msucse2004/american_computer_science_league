@@ -426,8 +426,12 @@ class Expression:
                 left_term = token2
                 right_term = token3
                 if operator == "^":
-                    print(f"infix: {expression}, prefix: {prefix_expression}, l: {left_term}, r: {right_term}")
-                    if identify_token_type(left_term) == "Unknown":
+                    # print(f"infix: {expression}, prefix: {prefix_expression}, l: {left_term}, r: {right_term}")
+                    
+                    # left_term에 이미 지수(superscript)가 포함되어 있는지 확인
+                    has_superscript = any(c in SUPERSCRIPT_NUMBERS.values() for c in left_term)
+                    
+                    if identify_token_type(left_term) == "Unknown" or has_superscript:
                         new_term = f"({left_term}){SUPERSCRIPT_NUMBERS[right_term]}"
                     else:
                         if identify_token_type(right_term) == "Number" and any(c in SUPERSCRIPT_NUMBERS.values() for c in right_term):
